@@ -471,6 +471,7 @@ export default function AppLayout() {
   )}
 
   <SidebarLink to="/dashboard" end icon="" label={collapsed || isMobile ? '' : 'Dashboard'} />
+  <SidebarLink to="/governance" icon="" label={collapsed || isMobile ? '' : 'Governance'} />
   <SidebarLink to="/analyze"       icon="" label={collapsed || isMobile ? '' : 'Analyze Repo'} />
 
   {repoId && !collapsed && !isMobile && <RepoSidebar repoId={repoId} />}

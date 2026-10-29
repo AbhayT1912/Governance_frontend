@@ -60,6 +60,7 @@ import ResetPassword from './pages/auth/ResetPassword';
 // User Pages
 import Dashboard from './pages/user/Dashboard';
 import Analyze from './pages/user/Analyze';
+import GovernanceHome from './pages/user/GovernanceHome';
 
 // Repo Pages
 import RepoOverview from './pages/repo/RepoOverview';
@@ -111,6 +112,7 @@ export default function App() {
         {/* ── App Routes — must be signed in ── */}
         <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/governance" element={<GovernanceHome />} />
           <Route path="/analyze" element={<Analyze />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />

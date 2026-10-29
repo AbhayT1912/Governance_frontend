@@ -37,6 +37,7 @@ const getRepoName = (repo) => {
 };
 
 const QUICK_ACTIONS = [
+  { to: '/governance', icon: '', label: 'Governance Control Center', color: '#4ade80' },
   { to: '/analyze', icon: '', label: 'Analyze New Repo',  color: '#4ade80' },
   { to: '/profile',  icon: '', label: 'Edit Profile',      color: '#60a5fa' },
   { to: '/settings', icon: '',  label: 'Account Settings',  color: '#a78bfa' },
