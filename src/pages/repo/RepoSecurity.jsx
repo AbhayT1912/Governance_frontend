@@ -1,6 +1,18 @@
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 import { api } from '../../utils/api';
+import './security.css';
+
+const TYPES = [
+  { label: 'Secrets', countKey: 'secrets', type: 'SECRET', icon: '◆' },
+  { label: 'Dependency CVEs', countKey: 'dependencies', type: 'CVE', icon: '⚒' },
+  { label: 'Malicious patterns', countKey: 'malicious', type: 'MALICIOUS_PATTERN', icon: '◈' },
+  { label: 'Code practice', countKey: 'sast', type: 'BAD_PRACTICE', icon: '▤' },
+  { label: 'License issues', countKey: 'licenses', type: 'LICENSE_ISSUE', icon: '§' },
+];
+const SEVERITIES = ['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
+const severityColor = { CRITICAL: '#ef665c', HIGH: '#f1a64a', MEDIUM: '#e5c85b', LOW: '#82c879' };
+const typeIcon = { SECRET: '◆', CVE: '⚒', MALICIOUS_PATTERN: '◈', BAD_PRACTICE: '▤', LICENSE_ISSUE: '§' };
 
 export default function RepoSecurity() {
   const { repoId } = useParams();
@@ -11,350 +23,73 @@ export default function RepoSecurity() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchSecurityData();
-  }, [repoId]);
+  useEffect(() => { fetchSecurityData(); }, [repoId]);
 
   const fetchSecurityData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [summaryRes, findingsRes] = await Promise.all([
         api.get(`/repos/${repoId}/security/summary`),
         api.get(`/repos/${repoId}/security/findings?limit=100`),
       ]);
-
       setSummary(summaryRes.data);
       setFindings(findingsRes.data.findings);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Security scan could not be loaded.');
     } finally {
       setLoading(false);
     }
   };
 
-  const getSeverityColor = (severity) => {
-    const colors = {
-      CRITICAL: '#ff1744',
-      HIGH: '#ff9100',
-      MEDIUM: '#ffd600',
-      LOW: '#76ff03',
-    };
-    return colors[severity] || '#4ade80';
-  };
+  const filteredFindings = (findings || []).filter((finding) =>
+    (filter === 'ALL' || finding.type === filter)
+      && (severityFilter === 'ALL' || finding.severity === severityFilter));
+  const byType = summary?.by_type || {};
+  const issueTypeCount = Object.values(byType).reduce((total, value) => total + (Number(value) || 0), 0);
+  const trustScore = Number(summary?.trust_score) || 0;
+  const trustColor = trustScore < 30 ? severityColor.CRITICAL : trustScore < 60 ? severityColor.HIGH : trustScore < 80 ? severityColor.MEDIUM : severityColor.LOW;
 
-  const getTypeIcon = (type) => {
-    const icons = {
-      SECRET: '🔐',
-      CVE: '⚠️',
-      MALICIOUS_PATTERN: '🎯',
-      BAD_PRACTICE: '📋',
-      LICENSE_ISSUE: '⚖️',
-    };
-    return icons[type] || '🔍';
-  };
+  if (loading) return <main className="mc-security"><div className="security-loading"><span className="security-pickaxe">⚒</span><b>Checking the perimeter…</b><div className="security-xp"><i /></div><small>Gathering security findings</small></div></main>;
 
-  const filteredFindings = findings.filter((f) => {
-    const typeMatch = filter === 'ALL' || f.type === filter;
-    const severityMatch = severityFilter === 'ALL' || f.severity === severityFilter;
-    return typeMatch && severityMatch;
-  });
-
-  const trustScoreStyles = {
-    background: summary?.trust_score < 30 ? '#ff1744' : 
-                summary?.trust_score < 60 ? '#ff9100' :
-                summary?.trust_score < 80 ? '#ffd600' : '#76ff03',
-    boxShadow: `0 0 20px ${summary?.trust_score < 30 ? '#ff1744' : 
-                          summary?.trust_score < 60 ? '#ff9100' :
-                          summary?.trust_score < 80 ? '#ffd600' : '#76ff03'}40`,
-  };
-
-  if (loading) {
-    return (
-      <div style={{ padding: '20px', textAlign: 'center', color: '#4ade80' }}>
-        <p>🔍 Scanning for security issues...</p>
+  return <main className="mc-security">
+    <header className="security-hero">
+      <div className="security-hero-copy">
+        <div className="security-eyebrow"><span /> REPOSITORY WATCHTOWER · SECURITY QUEST</div>
+        <h1>Security <em>analysis</em></h1>
+        <p>Inspect the project’s weak points, sort findings by threat level, and see what needs attention first.</p>
       </div>
-    );
-  }
+      <div className="security-hero-mark" aria-hidden="true"><span>⚔</span><small>SCOUT<br />REPORT</small></div>
+      {summary && <div className="security-hero-score" style={{ '--score-color': trustColor }}><span>REPO DEFENSE</span><strong>{summary.trust_score ?? '—'}<small>/100</small></strong><div className="security-xp"><i style={{ width: `${Math.max(0, Math.min(trustScore, 100))}%` }} /></div><small>Security trust score</small></div>}
+    </header>
 
-  return (
-    <div style={{ padding: '20px', color: '#4ade80', fontFamily: 'VT323, monospace' }}>
-      <style>{`
-        .security-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 16px;
-          margin-bottom: 32px;
-        }
-        .metric-card {
-          background: #020c06;
-          border: 2px solid #1a4528;
-          padding: 16px;
-          text-align: center;
-          transition: all 0.2s;
-        }
-        .metric-card:hover {
-          border-color: #4ade80;
-          box-shadow: 0 0 12px rgba(74, 222, 128, 0.3);
-        }
-        .metric-value {
-          font-size: 32px;
-          font-weight: bold;
-          margin-bottom: 8px;
-          font-family: 'Press Start 2P', monospace;
-        }
-        .metric-label {
-          font-size: 12px;
-          color: #2d6a3f;
-          text-transform: uppercase;
-          letter-spacing: 2px;
-        }
-        .trust-score-circle {
-          width: 120px;
-          height: 120px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 auto 12px;
-          border: 3px solid currentColor;
-          font-size: 36px;
-          font-weight: bold;
-        }
-        .findings-container {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-        .finding-item {
-          background: #020c06;
-          border: 2px solid #1a4528;
-          padding: 16px;
-          transition: all 0.2s;
-          display: flex;
-          gap: 16px;
-          align-items: flex-start;
-        }
-        .finding-item:hover {
-          border-color: #4ade80;
-          box-shadow: 0 0 12px rgba(74, 222, 128, 0.2);
-          transform: translateX(4px);
-        }
-        .severity-badge {
-          padding: 6px 12px;
-          border-radius: 4px;
-          font-size: 10px;
-          font-weight: bold;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          white-space: nowrap;
-          border: 1px solid currentColor;
-        }
-        .finding-content {
-          flex: 1;
-        }
-        .finding-title {
-          font-size: 16px;
-          color: #4ade80;
-          margin-bottom: 6px;
-          font-family: 'Press Start 2P', monospace;
-          font-size: 12px;
-        }
-        .finding-desc {
-          font-size: 12px;
-          color: #2d6a3f;
-          margin-bottom: 6px;
-          line-height: 1.4;
-        }
-        .finding-meta {
-          display: flex;
-          gap: 16px;
-          font-size: 11px;
-          color: #1a4528;
-        }
-        .filter-btn {
-          background: #020c06;
-          border: 2px solid #1a4528;
-          color: #2d6a3f;
-          padding: 8px 16px;
-          cursor: pointer;
-          font-family: 'VT323', monospace;
-          font-size: 14px;
-          transition: all 0.2s;
-          margin-right: 8px;
-        }
-        .filter-btn.active {
-          border-color: #4ade80;
-          color: #4ade80;
-          box-shadow: 0 0 12px rgba(74, 222, 128, 0.3);
-        }
-        .filter-btn:hover {
-          border-color: #4ade80;
-          color: #4ade80;
-        }
-        .type-badge {
-          display: inline-block;
-          background: #1a4528;
-          border: 1px solid #2d6a3f;
-          padding: 4px 8px;
-          margin-right: 8px;
-          font-size: 10px;
-          margin-bottom: 4px;
-        }
-      `}</style>
+    {error && <div className="security-error" role="alert"><span>⚠</span><div><b>Could not load the watchtower report</b><small>{error}</small></div><button type="button" onClick={fetchSecurityData}>Retry scan</button></div>}
 
-      <h1 style={{ fontSize: '24px', marginBottom: '32px', color: '#4ade80', textShadow: '2px 2px 0 #040d07' }}>
-        🔒 Security Analysis
-      </h1>
+    {summary && <section className="security-metrics" aria-label="Security summary">
+      <article className="security-metric"><span className="metric-glyph">◆</span><small>CRITICAL THREATS</small><strong className="threat-critical">{summary.critical_vulnerabilities ?? 0}</strong><span>Immediate review</span></article>
+      <article className="security-metric"><span className="metric-glyph">⚒</span><small>FINDINGS</small><strong>{summary.total_findings ?? findings.length}</strong><span>Across the repository</span></article>
+      <article className="security-metric"><span className="metric-glyph">▦</span><small>ISSUE CLASSES</small><strong>{issueTypeCount}</strong><span>Signals grouped by type</span></article>
+      <article className="security-metric defense-metric" style={{ '--score-color': trustColor }}><span className="metric-glyph">⬟</span><small>DEFENSE LEVEL</small><strong>{trustScore >= 80 ? 'FORTIFIED' : trustScore >= 60 ? 'GUARDED' : trustScore >= 30 ? 'EXPOSED' : 'AT RISK'}</strong><span>Based on the trust score</span></article>
+    </section>}
 
-      {/* Summary Metrics */}
-      {summary && (
-        <div className="security-grid">
-          <div className="metric-card">
-            <div className="trust-score-circle" style={trustScoreStyles}>
-              {summary.trust_score}
-            </div>
-            <div className="metric-label">Trust Score</div>
-          </div>
+    {summary && <section className="security-type-section">
+      <div className="security-section-title"><div><span className="security-eyebrow">CHOOSE A TARGET</span><h2>Threat map</h2></div><span>Filter findings by issue class</span></div>
+      <div className="security-type-grid">{TYPES.map((item) => <button type="button" key={item.type} className={`security-type-tile ${filter === item.type ? 'is-selected' : ''}`} onClick={() => setFilter(filter === item.type ? 'ALL' : item.type)} aria-pressed={filter === item.type}>
+        <span className="type-glyph">{item.icon}</span><span className="type-name">{item.label}</span><b>{byType[item.countKey] || 0}</b><small>{filter === item.type ? 'TARGET SELECTED' : 'VIEW SIGNALS'} <i>→</i></small>
+      </button>)}</div>
+    </section>}
 
-          <div className="metric-card">
-            <div className="metric-value" style={{ color: '#ff1744' }}>
-              {summary.critical_vulnerabilities}
-            </div>
-            <div className="metric-label">🔴 Critical</div>
-          </div>
-
-          <div className="metric-card">
-            <div className="metric-value" style={{ color: '#ff9100' }}>
-              {summary.total_findings}
-            </div>
-            <div className="metric-label">Total Findings</div>
-          </div>
-
-          <div className="metric-card">
-            <div className="metric-value">
-              {Object.values(summary.by_type).reduce((a, b) => a + b, 0)}
-            </div>
-            <div className="metric-label">Issue Types</div>
-          </div>
-        </div>
-      )}
-
-      {/* Finding Type Breakdown */}
-      {summary && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginBottom: '32px' }}>
-          {[
-            { label: '🔐 Secrets', count: summary.by_type?.secrets || 0, type: 'SECRET' },
-            { label: '⚠️ CVEs', count: summary.by_type?.dependencies || 0, type: 'CVE' },
-            { label: '🎯 Malicious', count: summary.by_type?.malicious || 0, type: 'MALICIOUS_PATTERN' },
-            { label: '📋 Bad Practice', count: summary.by_type?.sast || 0, type: 'BAD_PRACTICE' },
-            { label: '⚖️ Licenses', count: summary.by_type?.licenses || 0, type: 'LICENSE_ISSUE' },
-          ].map((item) => (
-            <div
-              key={item.type}
-              className="metric-card"
-              style={{
-                cursor: 'pointer',
-                opacity: filter === 'ALL' || filter === item.type ? 1 : 0.6,
-              }}
-              onClick={() => setFilter(filter === item.type ? 'ALL' : item.type)}
-            >
-              <div className="metric-value" style={{ fontSize: '20px' }}>
-                {item.count}
-              </div>
-              <div className="metric-label">{item.label}</div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Filters */}
-      <div style={{ marginBottom: '24px' }}>
-        <div style={{ marginBottom: '12px', fontSize: '14px' }}>Filter by Severity:</div>
-        <div>
-          {['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'].map((sev) => (
-            <button
-              key={sev}
-              className={`filter-btn ${severityFilter === sev ? 'active' : ''}`}
-              onClick={() => setSeverityFilter(sev)}
-              style={{
-                color: sev !== 'ALL' ? getSeverityColor(sev) : '#2d6a3f',
-              }}
-            >
-              {sev}
-            </button>
-          ))}
-        </div>
+    <section className="security-findings-section">
+      <div className="security-section-title findings-heading"><div><span className="security-eyebrow">FIELD NOTES</span><h2>Findings <span className="findings-count">{filteredFindings.length}</span></h2></div>
+        <div className="security-severity-filters" aria-label="Filter by severity">{SEVERITIES.map((severity) => <button type="button" key={severity} className={severityFilter === severity ? 'is-active' : ''} onClick={() => setSeverityFilter(severity)}>{severity !== 'ALL' && <i style={{ background: severityColor[severity] }} />}{severity}</button>)}</div>
       </div>
+      {filteredFindings.length === 0 ? <div className="security-empty"><span>✓</span><b>{findings.length ? 'No signals match these filters.' : 'The watchtower is clear.'}</b><small>{findings.length ? 'Choose another issue class or severity.' : 'No security findings were returned for this repository.'}</small></div> : <div className="security-finding-list">{filteredFindings.map((finding, index) => <article key={finding._id || `${finding.type}-${index}`} className="security-finding" style={{ '--finding-color': severityColor[finding.severity] || '#82c879' }}>
+        <div className="finding-severity-block"><span>{typeIcon[finding.type] || '⌕'}</span><small>{finding.severity || 'INFO'}</small></div>
+        <div className="finding-main"><div className="finding-kicker"><span>{(finding.type || 'Finding').replaceAll('_', ' ')}</span>{finding.file_path && <code>{finding.file_path}{finding.line_number ? `:${finding.line_number}` : ''}</code>}</div><h3>{finding.title || 'Untitled finding'}</h3><p>{finding.description || 'No additional description was provided.'}</p></div>
+        <span className="finding-index">#{String(index + 1).padStart(2, '0')}</span>
+      </article>)}</div>}
+    </section>
 
-      {/* Findings List */}
-      <div style={{ marginBottom: '32px' }}>
-        <h2 style={{ fontSize: '18px', marginBottom: '16px', color: '#4ade80' }}>
-          📋 Findings ({filteredFindings.length})
-        </h2>
-
-        {filteredFindings.length === 0 ? (
-          <div style={{ padding: '20px', textAlign: 'center', color: '#2d6a3f' }}>
-            ✓ No findings match your filters
-          </div>
-        ) : (
-          <div className="findings-container">
-            {filteredFindings.map((finding) => (
-              <div key={finding._id} className="finding-item">
-                <div style={{ fontSize: '20px', minWidth: '24px' }}>
-                  {getTypeIcon(finding.type)}
-                </div>
-                <div className="finding-content">
-                  <div className="finding-title">{finding.title}</div>
-                  <div className="finding-desc">{finding.description}</div>
-                  <div className="type-badge">{finding.type}</div>
-                  {finding.file_path && (
-                    <div className="finding-meta">
-                      <span>📁 {finding.file_path}</span>
-                      {finding.line_number && <span>📍 Line {finding.line_number}</span>}
-                    </div>
-                  )}
-                </div>
-                <div
-                  className="severity-badge"
-                  style={{
-                    color: getSeverityColor(finding.severity),
-                    backgroundColor: getSeverityColor(finding.severity) + '20',
-                  }}
-                >
-                  {finding.severity}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Top Findings Summary */}
-      {summary?.top_findings && summary.top_findings.length > 0 && (
-        <div style={{ marginTop: '32px' }}>
-          <h2 style={{ fontSize: '18px', marginBottom: '16px', color: '#ff9100' }}>
-            ⚡ Top Findings to Fix
-          </h2>
-          <div style={{ background: '#020c06', border: '2px solid #1a4528', padding: '16px' }}>
-            {summary.top_findings.map((finding, idx) => (
-              <div
-                key={idx}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '12px 0',
-                  borderBottom: idx < summary.top_findings.length - 1 ? '1px solid #1a4528' : 'none',
-                  color: getSeverityColor(finding.severity),
-                }}
-              >
-                <span>{`${idx + 1}. ${finding.title}`}</span>
-                <span style={{ fontSize: '11px' }}>{finding.severity}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+    {summary?.top_findings?.length > 0 && <section className="security-quest-board"><div className="quest-board-heading"><span>⚒</span><div><small>PRIORITY QUESTS</small><h2>Best next moves</h2></div><b>{summary.top_findings.length} TASKS</b></div><div className="quest-list">{summary.top_findings.map((finding, index) => <div className="quest-row" key={`${finding.title}-${index}`}><span className="quest-number">{String(index + 1).padStart(2, '0')}</span><span>{finding.title}</span><b style={{ color: severityColor[finding.severity] || '#82c879' }}>{finding.severity}</b></div>)}</div></section>}
+  </main>;
 }

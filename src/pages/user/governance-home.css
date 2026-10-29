@@ -74,3 +74,41 @@
 .governance-home-error { margin-bottom: 14px; padding: 12px 14px; border: 1px solid rgba(248, 113, 113, .35); border-radius: 10px; color: #fecaca; background: rgba(127, 29, 29, .15); }
 @media (max-width: 850px) { .governance-home-hero { grid-template-columns: 1fr; }.governance-home-visual { min-height: 280px; }.governance-home-summary { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 540px) { .governance-home { padding: 16px; }.governance-home-visual { min-height: 250px; }.governance-home-summary { grid-template-columns: 1fr 1fr; }.governance-home-summary > div { min-height: 100px; padding: 13px; }.governance-home-summary .governance-ring-card { grid-column: span 2; }.governance-home-proof { width: 100%; }.governance-node { font-size: 7px; }.node-right { right: 0; } }
+
+/* Match the repository's Minecraft grass, dirt, and stone UI language. */
+.governance-home { --gov-green:#a6ce70; --gov-muted:#b7af9a; color:#eee7d5; font-family:'Share Tech Mono','VT323',monospace; background-image:linear-gradient(rgba(181,192,150,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(181,192,150,.035) 1px,transparent 1px); background-size:24px 24px; }
+.governance-home-hero { border:2px solid #755b3e; border-top:7px solid #709448; border-radius:3px; background:linear-gradient(115deg,#373a34,#252a27 70%,#3b2e22); box-shadow:5px 6px 0 #171a18; }
+.governance-home-eyebrow { color:#b2d37e; font-family:'Press Start 2P',monospace; font-size:8px; letter-spacing:0; }
+.governance-home-copy h1 { color:#f3ecd9; font-family:'Press Start 2P',monospace; font-size:clamp(22px,3.4vw,38px); line-height:1.6; letter-spacing:0; text-shadow:4px 4px #1a1d19; }
+.governance-home-copy h1 span { color:#a8d26b; }
+.governance-home-copy>p { color:#c4bdab; font-size:16px; line-height:1.6; }
+.governance-primary-link { border:2px solid #9bbd65; border-radius:2px; color:#192016; background:#a6cf6b; box-shadow:3px 4px 0 #4b6037; font-family:'Press Start 2P',monospace; font-size:8px; }
+.governance-home-proof { color:#c1b99f; }
+.governance-home-visual { border:2px solid #70583d; border-radius:3px; background:linear-gradient(145deg,#30342f,#232724); box-shadow:inset 0 -5px #1b1e1b,4px 5px 0 #171a18; }
+.governance-orbit { border-color:#8c9d61!important; border-radius:2px!important; transform:rotate(45deg)!important; }
+.governance-core { border:0!important; border-radius:2px!important; background:transparent!important; }
+.governance-core-mark { border:3px solid #b6d378!important; border-radius:2px!important; color:#f2e9d3!important; background:#536b3e!important; box-shadow:4px 4px 0 #273324!important; font-family:'Press Start 2P',monospace!important; }
+.governance-core>span { color:#c2bb9e!important; font-family:'Press Start 2P',monospace!important; font-size:7px!important; }
+.governance-node { border:2px solid #8c704b!important; border-radius:2px!important; color:#ded4b8!important; background:#49382a!important; box-shadow:3px 3px 0 #201a15!important; font-family:'Press Start 2P',monospace!important; font-size:7px!important; }
+.governance-node b { color:#b5d879!important; }
+.governance-home-summary>div,.governance-ring-card { border:2px solid #55594c!important; border-bottom:4px solid #755137!important; border-radius:2px!important; background:linear-gradient(145deg,#333631,#252927)!important; box-shadow:3px 4px 0 #171a18!important; }
+.governance-home-summary>div>span { color:#b2c17e!important; font-family:'Press Start 2P',monospace!important; font-size:7px!important; }
+.governance-home-summary strong { color:#f1ead8!important; font-family:'Press Start 2P',monospace!important; }
+.governance-home-summary small,.governance-ring-card small { color:#b2aa96!important; }
+.governance-section-heading h2 { color:#f1ead8!important; font-family:'Press Start 2P',monospace!important; font-size:16px!important; line-height:1.8; letter-spacing:0!important; }
+.governance-section-heading p { color:#b9b19c!important; }
+.governance-search { border:2px solid #5a5a4b!important; border-radius:2px!important; color:#c9bd98!important; background:#252926!important; box-shadow:2px 3px 0 #171a18; }
+.governance-search input { color:#f0e8d7!important; }
+.governance-repo-card { border:2px solid #55594c!important; border-top:5px solid #709448!important; border-radius:2px!important; background:linear-gradient(145deg,#333631,#252927)!important; box-shadow:3px 4px 0 #171a18!important; }
+.governance-repo-card:hover { transform:translateY(-2px)!important; border-color:#9bbd65!important; box-shadow:4px 6px 0 #171a18!important; }
+.governance-repo-icon { border:2px solid #876442!important; border-radius:2px!important; color:#e2c67a!important; background:#49382a!important; }
+.governance-status { border-radius:2px!important; color:#d6caa8!important; background:#34352f!important; }
+.status-ready { color:#c1e38a!important; border-color:#748e4c!important; background:#36432f!important; }
+.governance-repo-card h3 { color:#f0e8d7!important; font-family:'Press Start 2P',monospace!important; font-size:10px!important; line-height:1.8; }
+.governance-repo-card>p { color:#aaa690!important; }
+.governance-repo-meta { border-color:#545247!important; color:#c3bba4!important; }
+.governance-repo-link { color:#b8d77d!important; font-family:'Press Start 2P',monospace!important; font-size:8px!important; line-height:1.8; }
+.governance-empty-state { border:2px dashed #766547!important; border-radius:2px!important; color:#eee7d5!important; background:#292c28!important; }
+.governance-empty-state span { color:#b7af9a!important; }
+.governance-home-error { border-radius:2px!important; }
+@media(max-width:850px) { .governance-home-copy h1 { font-size:clamp(19px,5vw,30px); } }

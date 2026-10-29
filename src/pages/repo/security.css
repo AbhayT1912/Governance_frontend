@@ -1,0 +1,71 @@
+.mc-security {
+  --sec-ink: #f0e8d8; --sec-muted: #b5aa93; --sec-grass: #6da34a; --sec-grass-light: #9cce65;
+  --sec-dirt: #68442e; --sec-dirt-deep: #38271e; --sec-stone: #292b2a; --sec-stone-dark: #191d1c;
+  max-width: 1440px; margin: 0 auto; padding: clamp(18px,3vw,38px); color: var(--sec-ink);
+  font-family: 'Share Tech Mono','VT323',monospace; background-image: linear-gradient(rgba(170,190,145,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(170,190,145,.025) 1px,transparent 1px); background-size: 24px 24px;
+}
+.mc-security * { box-sizing: border-box; }
+.security-hero { position:relative; display:grid; grid-template-columns:minmax(0,1fr) 116px minmax(180px,230px); align-items:center; gap:22px; overflow:hidden; padding:clamp(22px,4vw,42px); border:2px solid #846044; border-top:8px solid #668c43; background:linear-gradient(115deg,#333532 0%,#252927 68%,#35291f 100%); box-shadow:0 7px 0 #171a18, inset 0 -5px rgba(0,0,0,.2); }
+.security-hero:after { content:''; position:absolute; right:0; bottom:0; width:100%; height:8px; background:repeating-linear-gradient(90deg,#68442e 0 34px,#775136 34px 68px); opacity:.75; }
+.security-eyebrow { display:flex; align-items:center; gap:9px; color:#a6cc75; font:9px 'Press Start 2P',monospace; letter-spacing:.04em; }
+.security-eyebrow > span { width:9px;height:9px;background:#9cce65;box-shadow:2px 2px 0 #3c5931; }
+.security-hero h1 { margin:19px 0 12px; color:#f5edda; font:clamp(25px,4vw,42px) 'Press Start 2P',monospace; line-height:1.45; text-shadow:4px 4px #161b17; }
+.security-hero h1 em { color:#a8d26b;font-style:normal; }
+.security-hero-copy p { max-width:700px; margin:0; color:#c5bdab; font-size:17px; line-height:1.5; }
+.security-hero-mark { display:grid; justify-items:center; gap:9px; padding:14px 8px; border:2px solid #927252; background:#443429; box-shadow:inset 0 -5px #33251d,4px 4px 0 #171a18; }
+.security-hero-mark span { color:#d3b878; font-size:45px; text-shadow:3px 3px #3b2d22; }
+.security-hero-mark small { color:#d9c9a8; font:8px/1.8 'Press Start 2P',monospace; text-align:center; }
+.security-hero-score { padding:14px; border:2px solid #696955; background:#222624; box-shadow:inset 0 -4px #181c1a; }
+.security-hero-score>span,.security-hero-score>small { display:block; color:#aaa68e; font:8px 'Press Start 2P',monospace; }
+.security-hero-score strong { display:block; margin:12px 0; color:var(--score-color); font:26px 'Press Start 2P',monospace; }
+.security-hero-score strong small { color:#a9a48d; font:10px 'Share Tech Mono',monospace; }
+.security-hero-score>small { margin-top:8px; font:12px 'Share Tech Mono',monospace; }
+.security-xp { height:12px; padding:2px; border:2px solid #58634a; background:#171b18; box-shadow:inset 0 1px #101311; }
+.security-xp i { display:block; height:100%; background:repeating-linear-gradient(90deg,var(--score-color,#8cc85e) 0 12px,color-mix(in srgb,var(--score-color,#8cc85e),#fff 15%) 12px 14px); }
+.security-metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:22px 0 32px; }
+.security-metric { position:relative; min-height:142px; padding:18px; border:2px solid #51564b; border-bottom:5px solid #74513a; background:linear-gradient(145deg,#30332f,#232725); box-shadow:3px 4px 0 #171a18; }
+.security-metric:before { content:''; position:absolute; inset:0 auto auto 0; width:100%; height:5px; background:#789d50; }
+.security-metric .metric-glyph { position:absolute; top:15px; right:16px; color:#b39b67; font-size:22px; }
+.security-metric small { display:block; margin:7px 0 12px; color:#b5aa93; font:8px 'Press Start 2P',monospace; }
+.security-metric strong { display:block; color:#f1ead9; font:28px 'Press Start 2P',monospace; }
+.security-metric>span:last-child { display:block; margin-top:10px; color:#a8a28e; font-size:13px; }
+.security-metric .threat-critical { color:#ef7664; }
+.security-metric.defense-metric strong { color:var(--score-color); font-size:14px; line-height:1.7; }
+.security-section-title { display:flex; align-items:end; justify-content:space-between; gap:16px; margin-bottom:14px; }
+.security-section-title h2,.quest-board-heading h2 { margin:8px 0 0; color:#f3ecd9; font:16px 'Press Start 2P',monospace; line-height:1.7; }
+.security-section-title>span { color:#aaa58e; font-size:14px; }
+.security-type-section,.security-findings-section,.security-quest-board { margin:30px 0; }
+.security-type-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; }
+.security-type-tile { display:grid; grid-template-columns:34px 1fr auto; align-items:center; gap:6px 10px; min-width:0; padding:13px; border:2px solid #55594d; border-bottom:5px solid #64472f; color:#e9e2d0; background:#2d302c; box-shadow:3px 4px 0 #171a18; text-align:left; cursor:pointer; font:inherit; }
+.security-type-tile:hover,.security-type-tile.is-selected { border-color:#9fc969; background:#394332; transform:translateY(-2px); }
+.type-glyph { display:grid; grid-row:span 2; width:32px;height:32px;place-items:center; color:#d1b977; border:2px solid #816244; background:#49382a; font-size:19px; }
+.type-name { overflow:hidden; color:#e3ddce; font-size:14px; text-overflow:ellipsis; white-space:nowrap; }
+.security-type-tile>b { color:#a8d26b; font:15px 'Press Start 2P',monospace; }
+.security-type-tile>small { grid-column:2/4; color:#aaa58e; font:7px 'Press Start 2P',monospace; }
+.security-type-tile>small i { color:#a8d26b; font-size:12px; font-style:normal; }
+.findings-heading { align-items:center; flex-wrap:wrap; padding-bottom:13px; border-bottom:3px solid #57402e; }
+.findings-count { display:inline-grid; min-width:30px;height:26px;place-items:center; padding:0 6px; border:2px solid #756147; color:#f1d778; background:#493a29; font:11px 'Share Tech Mono',monospace; vertical-align:middle; }
+.security-severity-filters { display:flex; flex-wrap:wrap; gap:6px; }
+.security-severity-filters button { display:flex; align-items:center; gap:6px; padding:8px 10px; border:2px solid #53574d; color:#bdb6a2; background:#292c29; cursor:pointer; font:10px 'Press Start 2P',monospace; }
+.security-severity-filters button.is-active { border-color:#9fbd68; color:#f1ecd9; background:#3b4632; box-shadow:2px 2px 0 #151815; }
+.security-severity-filters i { width:8px;height:8px; }
+.security-finding-list { display:grid; gap:9px; }
+.security-finding { display:grid; grid-template-columns:76px minmax(0,1fr) 40px; gap:15px; align-items:stretch; padding:12px; border:2px solid #4d534a; border-left:5px solid var(--finding-color); background:linear-gradient(100deg,#30332f,#252927); box-shadow:3px 3px 0 #171a18; }
+.finding-severity-block { display:flex; flex-direction:column; justify-content:center; align-items:center; gap:8px; border-right:1px solid #55594c; color:var(--finding-color); }
+.finding-severity-block span { font-size:24px; }
+.finding-severity-block small { font:7px 'Press Start 2P',monospace; text-align:center; }
+.finding-kicker { display:flex; flex-wrap:wrap; gap:8px; align-items:center; color:#a8c775; font:8px 'Press Start 2P',monospace; }
+.finding-kicker code { max-width:100%; overflow-wrap:anywhere; color:#b8ae98; font:12px 'Share Tech Mono',monospace; }
+.finding-main h3 { margin:8px 0 5px; color:#f1ead8; font-size:18px; }
+.finding-main p { margin:0; color:#c0baa9; font-size:15px; line-height:1.5; overflow-wrap:anywhere; }
+.finding-index { align-self:start; color:#777b6e; font:8px 'Press Start 2P',monospace; text-align:right; }
+.security-empty,.security-loading { display:flex; min-height:185px; flex-direction:column; align-items:center; justify-content:center; gap:11px; padding:24px; border:2px dashed #65654f; color:#e8e1ce; background:#292c28; text-align:center; }
+.security-empty>span { color:#a8ce70; font-size:30px; }.security-empty b,.security-loading b { font:11px 'Press Start 2P',monospace; line-height:1.8; }.security-empty small,.security-loading small { color:#aaa58f; font-size:14px; }
+.security-loading { min-height:70vh; border:0; background:transparent; }.security-loading .security-xp { width:min(320px,80%); }.security-loading .security-xp i { width:55%; animation:security-scan 1.3s steps(5) infinite alternate; }.security-pickaxe { color:#d1b977; font-size:42px; }
+@keyframes security-scan { to { width:100%; } }
+.security-error { display:flex; align-items:center; gap:13px; margin:18px 0; padding:13px; border:2px solid #ad5946; color:#f0d9ca; background:#422b25; }.security-error>span { color:#ef7664; font-size:24px; }.security-error div { display:grid; flex:1; gap:4px; }.security-error small { color:#c8ae9c; }.security-error button { padding:9px 12px; border:2px solid #c18155; color:#fff0da; background:#68442e; cursor:pointer; font:9px 'Press Start 2P',monospace; }
+.security-quest-board { border:2px solid #6f583d; border-top:7px solid #778f4d; background:#292c29; box-shadow:4px 5px 0 #171a18; }
+.quest-board-heading { display:flex; align-items:center; gap:12px; padding:14px 17px; border-bottom:2px solid #514538; background:#38362e; }.quest-board-heading>span { color:#d4b966; font-size:29px; }.quest-board-heading>div { flex:1; }.quest-board-heading small { color:#a8c775; font:8px 'Press Start 2P',monospace; }.quest-board-heading h2 { margin-top:6px; font-size:12px; }.quest-board-heading>b { padding:7px; border:1px solid #736044; color:#d9c88f; font:8px 'Press Start 2P',monospace; }
+.quest-row { display:grid; grid-template-columns:34px minmax(0,1fr) auto; align-items:center; gap:10px; padding:11px 16px; border-bottom:1px solid #494b40; color:#e7e0ce; font-size:15px; }.quest-row:last-child { border-bottom:0; }.quest-row>b { font:8px 'Press Start 2P',monospace; }.quest-number { color:#9cce65; font:10px 'Press Start 2P',monospace; }
+@media(max-width:950px) { .security-hero { grid-template-columns:minmax(0,1fr) 90px; }.security-hero-score { grid-column:1/-1; }.security-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }.security-type-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media(max-width:600px) { .mc-security { padding:14px; }.security-hero { grid-template-columns:1fr; }.security-hero-mark { display:none; }.security-hero h1 { font-size:22px; }.security-metrics { gap:8px; }.security-metric { min-height:130px; padding:13px; }.security-metric strong { font-size:20px; }.security-type-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.security-section-title { align-items:flex-start; flex-direction:column; }.security-finding { grid-template-columns:55px minmax(0,1fr); gap:10px; }.finding-index { display:none; }.finding-kicker { font-size:7px; }.security-severity-filters button { padding:7px; font-size:7px; }.quest-board-heading>b { display:none; } }
