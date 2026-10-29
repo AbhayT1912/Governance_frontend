@@ -56,3 +56,31 @@
 .gov-control button { transition:filter .15s,transform .15s; }.gov-control button:hover:not(:disabled) { filter:brightness(1.08);transform:translateY(-1px); }.gov-control button:disabled { cursor:not-allowed; }
 @media(max-width:930px) { .gov-kpis { grid-template-columns:repeat(2,1fr); }.gov-agent-picker { grid-template-columns:repeat(3,1fr); }.gov-hero { grid-template-columns:minmax(0,1fr) minmax(230px,.75fr); } }
 @media(max-width:650px) { .gov-hero { grid-template-columns:1fr; }.gov-hero-visual { min-height:220px; }.gov-kpis { gap:8px; }.gov-kpis > div { padding:13px; }.gov-kpis strong { font-size:24px; }.gov-agent-picker { grid-template-columns:repeat(2,1fr); }.gov-consensus-overview { grid-template-columns:70px 1fr;gap:12px; }.gov-score-ring { width:64px;height:64px; }.gov-consensus-count { grid-column:1 / 3;flex-direction:row;align-items:baseline;gap:7px; }.gov-consensus-count strong { font-size:18px; }.gov-consensus-count small { margin:0 0 0 auto; }.gov-policy-row { grid-template-columns:1fr; }.gov-policy-row > label,.gov-policy-row > button { grid-column:1;grid-row:auto;justify-self:start;margin-left:0!important; }.gov-form-footer { align-items:flex-start; }.gov-form-footer button { width:100%; }.gov-decision-metrics { gap:8px; }.gov-rag-state { width:100%; } }
+
+/* Block palette and crisp borders bring the control center into the game's world. */
+.gov-control { --gov-line:rgba(136,190,129,.3); }
+.gov-hero,.gov-control section[style] { border-radius:5px!important; border-color:rgba(119,174,111,.35)!important; box-shadow:0 5px 0 rgba(4,13,8,.8),0 0 0 2px rgba(45,91,57,.18); }
+.gov-hero { background:linear-gradient(135deg,#172f20,#0b1b13 65%,#132719); }
+.gov-hero h1,.gov-section-head h2,.gov-section-title { text-shadow:2px 2px 0 rgba(0,0,0,.45); }
+.gov-kpis > div,.gov-agent-option,.gov-decision-card,.gov-finding-card,.gov-agent-card { border-radius:4px; box-shadow:inset 0 -3px rgba(0,0,0,.14); }
+.gov-kpis > div { border-bottom:3px solid #477844; background:linear-gradient(160deg,#1a3021,#102016); }
+.gov-agent-option.selected { border-color:#86cf69; background:linear-gradient(145deg,#254d2b,#14291a); box-shadow:inset 0 -3px #426d36,0 0 0 1px rgba(134,207,105,.2); }
+.gov-agent-option:not(.selected) { border-bottom:3px solid #3c5140; }
+.gov-agent-glyph { text-shadow:2px 2px #14341f; }
+.gov-decision-card { border-left:4px solid #73bd61; background:linear-gradient(90deg,rgba(35,68,39,.38),rgba(4,16,10,.35)); }
+.gov-decision-findings { min-width:0; padding:12px; border:1px solid rgba(131,170,151,.15); border-top:3px solid #486f43; background:#08130c; color:#d9eadc; }
+.gov-decision-finding { margin-top:10px; padding:11px; border:1px solid rgba(131,170,151,.13); background:rgba(21,40,26,.62); }
+.gov-decision-finding > div { display:flex; align-items:center; gap:9px; }
+.gov-decision-finding p { margin:8px 0; color:#d5e4d7; font-size:12px; line-height:1.65; overflow-wrap:anywhere; }
+.gov-decision-finding small { color:#8eaa92; font-size:10px; overflow-wrap:anywhere; }
+.gov-decision-finding ul { margin:8px 0 0; padding-left:18px; color:#a9c9a9; font-size:10px; line-height:1.7; overflow-wrap:anywhere; }
+.gov-empty-note { margin:10px 0 0; color:#8fa18f; font-size:11px; }
+.gov-run-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.gov-control .gov-run-actions button { border-radius:4px!important; letter-spacing:.035em; }
+.gov-finding-card { border-left:3px solid #537b49; }
+.gov-finding-top strong span { display:inline-block; margin-left:4px; overflow-wrap:anywhere; }
+.gov-evidence-list code { border-radius:3px; overflow-wrap:anywhere; }
+.gov-control button { border-radius:4px!important; }
+.gov-decision-status,.gov-severity,.gov-job-badge,.gov-count-badge { border-radius:3px; }
+.gov-control section[style] h2 { letter-spacing:.01em; }
+@media(max-width:650px) { .gov-run-actions { width:100%; }.gov-run-actions button { flex:1; } }

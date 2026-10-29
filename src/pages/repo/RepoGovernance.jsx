@@ -32,6 +32,7 @@ export default function RepoGovernance() {
   const [policies, setPolicies] = useState([]);
   const [integrity, setIntegrity] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [reportBusy, setReportBusy] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [policyDrafts, setPolicyDrafts] = useState({});
@@ -130,6 +131,16 @@ export default function RepoGovernance() {
     finally { setBusy(false); }
   };
 
+  const downloadReport = async () => {
+    if (!jobId) return;
+    setReportBusy(true); setError(''); setNotice('');
+    try {
+      await api.download(`${API_ROOT}/jobs/${encodeURIComponent(jobId)}/report.pdf`, `repolens-governance-${jobId}.pdf`);
+      setNotice('Governance report downloaded.');
+    } catch (err) { setError(err.message || 'Could not download the governance report.'); }
+    finally { setReportBusy(false); }
+  };
+
   const savePolicy = async (policy) => {
     setBusy(true); setError(''); setNotice('');
     try {
@@ -189,7 +200,7 @@ export default function RepoGovernance() {
         <section style={panel}>
           <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
             <h2 className="gov-section-title">Run activity <span className={`gov-job-badge ${job?.status === 'FAILED' ? 'failed' : ''}`}>{job?.status || 'Loading…'}</span></h2>
-            <button type="button" disabled={busy} onClick={() => refresh(jobId).catch((err) => setError(err.message))} style={mutedButton}>REFRESH</button>
+            <div className="gov-run-actions"><button type="button" disabled={busy} onClick={() => refresh(jobId).catch((err) => setError(err.message))} style={mutedButton}>REFRESH</button><button type="button" disabled={reportBusy || !TERMINAL.has(job?.status)} onClick={downloadReport} style={button}>{reportBusy ? 'PREPARING REPORT…' : 'DOWNLOAD PDF REPORT'}</button></div>
           </div>
           <div className="gov-job-meta">Run <code>{jobId}</code>{job?.createdAt && ` · Started ${dateLabel(job.createdAt)}`}</div>
           {job?.error && <p role="alert" style={{ color: '#fca5a5' }}>{job.error}</p>}
@@ -210,7 +221,7 @@ export default function RepoGovernance() {
           </div>}
           {decisions.length === 0 && <p style={{ color: '#8aaa91' }}>Consensus decisions appear here when the agents finish.</p>}
           {decisions.map((decision) => <article key={decision._id} style={{ borderTop: '1px solid #245b35', padding: '12px 0' }}>
-            <div className="gov-decision-card"><div className="gov-decision-title"><span className="gov-decision-category">{decision.category || 'Job summary'}</span><strong>{decision.target || 'Repository'}</strong><span className={`gov-decision-status decision-${decision.status?.toLowerCase()}`}>{decision.status}</span></div>
+            <div className="gov-decision-card"><div className="gov-decision-title"><span className="gov-decision-category">{decision.category || 'Job summary'}</span><strong>{decision.targetLabel || (decision.target && /^[a-f\d]{24}$/i.test(decision.target) ? 'Repository target' : decision.target) || 'Repository'}</strong><span className={`gov-decision-status decision-${decision.status?.toLowerCase()}`}>{decision.status}</span></div>
               <div className="gov-decision-metrics"><span>Risk <b>{Number(decision.score || 0).toFixed(2)}</b><i><em style={{ width: `${Math.max(0, Math.min(100, Number(decision.score || 0) * 100))}%` }} /></i></span><span>Agreement <b>{Number(decision.agreement || 0).toFixed(2)}</b><i><em style={{ width: `${Math.max(0, Math.min(100, Number(decision.agreement || 0) * 100))}%` }} /></i></span></div>
             </div>
             {decision.provenance && <div style={{ color: '#8aaa91', marginTop: 5 }}>Provenance: {JSON.stringify(decision.provenance)}</div>}
@@ -219,7 +230,7 @@ export default function RepoGovernance() {
               <button disabled={busy} onClick={() => decide(decision._id, false)} style={{ ...button, background: '#7f1d1d', borderColor: '#ef4444' }}>REJECT</button>
             </div>}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: 12, marginTop: 10 }}>
-              {[['Supporting findings', decision.findings || []], ['Dissent', decision.dissent || []]].map(([title, items]) => <div key={title} style={{ background: '#020c06', padding: 10 }}><strong>{title} ({items.length})</strong>{items.map((finding) => <p key={finding._id} style={{ margin: '7px 0', color: '#a8c5ad' }}>{finding.title || finding.summary || finding.category}: {finding.description || finding.message || ''}</p>)}</div>)}
+              {[['Supporting findings', decision.findings || []], ['Dissent', decision.dissent || []]].map(([title, items]) => <div className="gov-decision-findings" key={title}><strong>{title} ({items.length})</strong>{items.length === 0 ? <p className="gov-empty-note">{title === 'Dissent' ? 'No agents disagreed with this result.' : 'No supporting findings were recorded.'}</p> : items.map((finding) => <div className="gov-decision-finding" key={finding._id}><div><span className="gov-decision-category">{finding.category || 'Finding'}</span><span className={`gov-severity severity-${finding.severity?.toLowerCase() || 'low'}`}>{finding.severity || 'LOW'}</span></div><p>{finding.claim || finding.title || finding.summary || 'No claim text was supplied.'}</p><small>{finding.targetLabel || finding.target || 'Repository'} · {finding.agentId || 'Agent'} · confidence {Number(finding.confidence || 0).toFixed(2)}</small>{finding.evidence?.length > 0 && <ul>{finding.evidence.map((item, index) => <li key={`${item.kind}-${item.ref}-${index}`}>{item.label || `${item.kind}: ${item.ref}`}</li>)}</ul>}</div>)}</div>)}
             </div>
           </article>)}
         </section>
@@ -227,10 +238,10 @@ export default function RepoGovernance() {
         <section style={panel}>
           <div className="gov-section-head"><div><div className="gov-eyebrow">EVIDENCE REGISTER</div><h2>Agent findings <span className="gov-count-badge">{findings.length}</span></h2><p>Claims retain their source references and Critic review state.</p></div></div>
           {findings.map((finding) => <article className="gov-finding-card" key={finding._id}>
-            <div className="gov-finding-top"><strong>{finding.category || 'Finding'} <span>· {finding.target}</span></strong><span className={`gov-severity severity-${finding.severity?.toLowerCase() || 'low'}`}>{finding.severity || 'LOW'}</span></div>
+            <div className="gov-finding-top"><strong>{finding.category || 'Finding'} <span>· {finding.targetLabel || (finding.target && /^[a-f\d]{24}$/i.test(finding.target) ? 'Repository target' : finding.target) || 'Repository'}</span></strong><span className={`gov-severity severity-${finding.severity?.toLowerCase() || 'low'}`}>{finding.severity || 'LOW'}</span></div>
             <div>{finding.claim}</div>
             <div className="gov-finding-meta"><span>{finding.agentId}</span><span>Critic: {finding.reviewStatus || 'pending'}</span>{finding.evidence?.length > 0 && <span>{finding.evidence.length} evidence reference{finding.evidence.length === 1 ? '' : 's'}</span>}</div>
-            {finding.evidence?.length > 0 && <div className="gov-evidence-list">{finding.evidence.map((item, index) => <code key={`${item.kind}-${item.ref}-${index}`}>{item.kind} · {item.ref}</code>)}</div>}
+            {finding.evidence?.length > 0 && <div className="gov-evidence-list">{finding.evidence.map((item, index) => <code key={`${item.kind}-${item.ref}-${index}`}>{item.label || `${item.kind} · ${item.ref}`}</code>)}</div>}
           </article>)}
           {findings.length === 0 && <p style={{ color: '#8aaa91' }}>No findings are available yet.</p>}
         </section>
